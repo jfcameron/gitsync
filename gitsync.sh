@@ -55,6 +55,13 @@ Error() { echo -e "$shortProgName: \033[1;31mError:\033[0m"   "$@" >/dev/stderr;
 # ---------------------------------------------------------------------
 # Implementation
 # ---------------------------------------------------------------------
+NO_STYLE='\033[0m'
+REPO_STYLE='\033[38;5;3m'
+UPTODATE_STYLE='\033[0;32m'
+NEEDUPDATE_STYLE='\033[0;31m'
+NL='
+'
+
 function clone()
 {
   Log clone $1
@@ -83,13 +90,6 @@ function pull()
 {
   Log pull $1
   pushd $PATH_TO_WORKSPACE > /dev/null
-
-  NO_STYLE='\033[0m'
-  REPO_STYLE='\033[38;5;3m'
-  UPTODATE_STYLE='\033[0;32m'
-  NEEDUPDATE_STYLE='\033[0;31m'
-  NL='
-  '
 
   for repo in ./*/.git; do 
   (
@@ -154,9 +154,6 @@ function pull()
 
 function push()
 {
-  NO_STYLE='\033[0m'
-  REPO_STYLE='\033[38;5;3m'
-
   Log "push"
   pushd $PATH_TO_WORKSPACE > /dev/null
 

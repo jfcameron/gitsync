@@ -8,7 +8,7 @@ USER="jfcameron"
 PATH_TO_WORKSPACE=~/Workspace
 
 #---------------------------------------------------------------------
-# Provide file header comment *and* use same as help information
+# Help & About
 #---------------------------------------------------------------------
 printHelp () {
 sed 's/^# \{0,1\}//' << Help

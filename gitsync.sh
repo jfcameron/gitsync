@@ -6,6 +6,7 @@
 #---------------------------------------------------------------------
 USER="jfcameron"
 PATH_TO_WORKSPACE=~/Workspace
+MAX_REPOS=100
 
 #---------------------------------------------------------------------
 # Help & About
@@ -68,16 +69,16 @@ function clone()
   pushd $PATH_TO_WORKSPACE > /dev/null
 
   if [ $1 == --personal ] || [ $1 == -p ] || [ $1 == -a ] || [ $1 == --all ]; then
-    echo "\033[1;33mCloning User Repos\033[0m"
-    curl "https://api.github.com/users/$USER/repos?page=1&per_page=1" |
+    echo -e "\033[1;33mCloning User Repos\033[0m"
+    curl -u $USER "https://api.github.com/users/$USER/repos?page=1&per_page=$MAX_REPOS" |
       grep -e 'git_url*' |
       cut -d \" -f 4 |
       xargs -L1 git clone
   fi
 
   if [ $1 == --starred ] || [ $1 == -s ] || [ $1 == -a ] || [ $1 == --all ]; then
-  echo "\033[1;33mCloning Starred Repos\033[0m"
-  curl "https://api.github.com/users/$USER/starred?page=1&per_page=1" |
+  echo -e "\033[1;33mCloning Starred Repos\033[0m"
+  curl -u $USER "https://api.github.com/users/$USER/starred?page=1&per_page=$MAX_REPOS" |
     grep -e 'git_url*' |
     cut -d \" -f 4 |
     xargs -L1 git clone

@@ -154,6 +154,9 @@ function pull()
 
 function push()
 {
+  NO_STYLE='\033[0m'
+  REPO_STYLE='\033[38;5;3m'
+
   Log "push"
   pushd $PATH_TO_WORKSPACE > /dev/null
 
@@ -163,6 +166,7 @@ function push()
     cd $repo
 
     if [[ $(git remote get-url origin) == *"${USER}"* ]]; then
+      printf "Repo: ${REPO_STYLE}${repo}${NO_STYLE}\n";
       git add --all
       git commit
       git push

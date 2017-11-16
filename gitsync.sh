@@ -89,25 +89,58 @@ function pull()
   for repo in ./*/.git; do 
   (
     repo=${repo%.*}
-    
-    printf "Repo: ${REPO_STYLE}${repo}${NO_STYLE}\n";
-    
     cd $repo
-    
-    git fetch --all
-    git submodule update --init --recursive
-    git status
-    
-    if [[ $( git status ) != *"Your branch is up-to-date"* ]]; then
-      printf "${NEEDUPDATE_STYLE}Updating...${NO_STYLE}\n"
-      git pull
+
+    if [[ $(git remote get-url origin) == *"${USER}"* ]]; then
+      isPersonalRepo=TRUE
     else
-      printf "${UPTODATE_STYLE}Already up-to-date.${NO_STYLE}\n"
+      isPersonalRepo=FALSE
     fi
 
-    cd ..
-
-    echo
+    if [ $1 == -p ] || [ $1 == --personal ]; then
+      if [ x$isPersonalRepo == 'xTRUE' ]; then
+        printf "Repo: ${REPO_STYLE}${repo}${NO_STYLE}\n";
+        git fetch --all
+        git submodule update --init --recursive
+        git status
+        if [[ $( git status ) != *"Your branch is up-to-date"* ]]; then
+          printf "${NEEDUPDATE_STYLE}Updating...${NO_STYLE}\n"
+          git pull
+        else
+          printf "${UPTODATE_STYLE}Already up-to-date.${NO_STYLE}\n"
+        fi
+        cd ..
+        echo
+      fi
+    elif [ $1 == -s ] || [ $1 == --starred ]; then
+      if [ x$isPersonalRepo == 'xFALSE' ]; then
+        printf "Repo: ${REPO_STYLE}${repo}${NO_STYLE}\n";
+        git fetch --all
+        git submodule update --init --recursive
+        git status
+        if [[ $( git status ) != *"Your branch is up-to-date"* ]]; then
+          printf "${NEEDUPDATE_STYLE}Updating...${NO_STYLE}\n"
+          git pull
+        else
+          printf "${UPTODATE_STYLE}Already up-to-date.${NO_STYLE}\n"
+        fi
+        cd ..
+        echo
+      fi
+    else
+      printf "Repo: ${REPO_STYLE}${repo}${NO_STYLE}\n";
+      git fetch --all
+      git submodule update --init --recursive
+      git status
+      if [[ $( git status ) != *"Your branch is up-to-date"* ]]; then
+        printf "${NEEDUPDATE_STYLE}Updating...${NO_STYLE}\n"
+        git pull
+      else
+        printf "${UPTODATE_STYLE}Already up-to-date.${NO_STYLE}\n"
+      fi
+      cd ..
+      echo
+    fi
 
   ); done
 
@@ -119,7 +152,18 @@ function push()
   Log "push"
   pushd $PATH_TO_WORKSPACE > /dev/null
 
+  for repo in ./*/.git; do 
+  (
+    repo=${repo%.*}
+    cd $repo
 
+    if [[ $(git remote get-url origin) == *"${USER}"* ]]; then
+      git add --all
+      git commit
+      git push
+    fi
+
+  ); done
 
   popd > /dev/null
 }

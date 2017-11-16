@@ -2,6 +2,12 @@
 #!/bin/sh
 
 #---------------------------------------------------------------------
+# Configuration
+#---------------------------------------------------------------------
+USER="jfcameron"
+PATH_TO_WORKSPACE=~/Workspace
+
+#---------------------------------------------------------------------
 # Provide file header comment *and* use same as help information
 #---------------------------------------------------------------------
 printHelp () {
@@ -29,37 +35,10 @@ Help
 #---------------------------------------------------------------------
 # Print info, warning, or error and eit
 #---------------------------------------------------------------------
-Log()   { echo "$shortProgName:" "$@"; }
+Log()   { echo -e "$shortProgName:" "$@"; }
 Info()  { if [ x$verbose = xTRUE ]; then echo "$shortProgName: Info:" "$@"; fi; }
-Warn()  { echo "$shortProgName: Warning:" "$@"; }
-Error() { echo "$shortProgName: Error:"   "$@" >/dev/stderr; exit 1; }
-
-#---------------------------------------------------------------------
-# Confirm or eit
-#---------------------------------------------------------------------
-Confirm () {
-       read -p "$shortProgName: $*? [y/n] " confirmAnswer
-       if [ x$confirmAnswer != xy -a x$confirmAnswer != xY ]; then 
-             Info "Exiting/Not Confirmed: $*"
-             exit 2;
-       fi
-       Info "Confirmed: $*"
-}
-
-Dialog () {
-       read -p "$shortProgName: $*: " dialogAnswer 
-       Info "Dialog: $*: $dialogAnswer"
-}
-
-DialogNoEcho () {
-       trap 'stty echo; exit'  1 2 3 15
-       stty -echo
-       read -p "$shortProgName: $*: " dialogAnswer 
-       echo '...'
-       stty echo
-       trap -  1 2 3 15
-       Info "DialogNoAnswer: $*: $dialogAnswer"
-}
+Warn()  { echo -e "$shortProgName: \033[1;33mWarning:\033[0m" "$@"; }
+Error() { echo -e "$shortProgName: \033[1;31mError:\033[0m"   "$@" >/dev/stderr; exit 1; }
 
 #---------------------------------------------------------------------
 # Misc utility functions
@@ -68,10 +47,86 @@ tolower( ) {
        echo $* | tr '[:upper:]' '[:lower:]'
 }
 
+# ---------------------------------------------------------------------
+# Implementation
+# ---------------------------------------------------------------------
+function clone()
+{
+  Log clone $1
+  pushd $PATH_TO_WORKSPACE > /dev/null
+
+  if [ $1 == --personal ] || [ $1 == -p ] || [ $1 == -a ] || [ $1 == --all ]; then
+    echo "\033[1;33mCloning User Repos\033[0m"
+    curl "https://api.github.com/users/$USER/repos?page=1&per_page=1" |
+      grep -e 'git_url*' |
+      cut -d \" -f 4 |
+      xargs -L1 git clone
+  fi
+
+  if [ $1 == --starred ] || [ $1 == -s ] || [ $1 == -a ] || [ $1 == --all ]; then
+  echo "\033[1;33mCloning Starred Repos\033[0m"
+  curl "https://api.github.com/users/$USER/starred?page=1&per_page=1" |
+    grep -e 'git_url*' |
+    cut -d \" -f 4 |
+    xargs -L1 git clone
+  fi
+
+  popd > /dev/null
+}
+
+function pull()
+{
+  Log pull $1
+  pushd $PATH_TO_WORKSPACE > /dev/null
+
+  NO_STYLE='\033[0m'
+  REPO_STYLE='\033[38;5;3m'
+  UPTODATE_STYLE='\033[0;32m'
+  NEEDUPDATE_STYLE='\033[0;31m'
+  NL='
+  '
+
+  for repo in ./*/.git; do 
+  (
+    repo=${repo%.*}
+    
+    printf "Repo: ${REPO_STYLE}${repo}${NO_STYLE}\n";
+    
+    cd $repo
+    
+    git fetch --all
+    git submodule update --init --recursive
+    git status
+    
+    if [[ $( git status ) != *"Your branch is up-to-date"* ]]; then
+      printf "${NEEDUPDATE_STYLE}Updating...${NO_STYLE}\n"
+      git pull
+    else
+      printf "${UPTODATE_STYLE}Already up-to-date.${NO_STYLE}\n"
+    fi
+
+    cd ..
+
+    echo
+
+  ); done
+
+  popd > /dev/null
+}
+
+function push()
+{
+  Log "push"
+  pushd $PATH_TO_WORKSPACE > /dev/null
+
+
+
+  popd > /dev/null
+}
+
 #---------------------------------------------------------------------
 # Mainline begins here
 #---------------------------------------------------------------------
-#set -v
 progName=$0
 shortProgName=`echo $progName|sed 's/^.*\///'`
 verbose=''
@@ -79,19 +134,29 @@ initialArgs="$@"
 
 while true; do 
   case $1 in
-    clone) 
+    clone | pull)
+      command=$1 
       shift
       case $1 in
-        -a | --all) Log "clone all!";;
-        -s | --starred) Log "clone starred!";;
-        -p | --personal) Log "clone personal!";;
-        *) Error "$1 unrecognized clone argument";;
+        -a | --all | -s | --starred | -p | --personal) $command $1;;
+        *) if [ "${1}" != '' ]; then 
+          Error "$1 unrecognized argument of $command" 
+        else 
+          Error "$command requires an argument" 
+        fi
+      ;;
       esac
     ;;
 
+    push)
+      push
+    ;;
+
+    -h | --help) printHelp;;
+
     *) 
       if [ "${1}" != '' ]; then
-        Error "Unknown option: '$1' Use '-h' for help"
+        Error "unrecognized option: '$1' Use '-h' for help"
       fi
       break
     ;;
@@ -108,57 +173,3 @@ if [ x$table = 'xTRUE' ]; then
 else
        Info "Table is false"
 fi
-
-#if [ x$babble = 'xTRUE' ]; then 
- # Info "babble is true"
-#fi
-
-#while true; do
-       #Confirm 'Do you want to continue' 
-
-       #Warn "This is an example of a warning"
-       #Log "This is an Logment" 
-       #Info "Note that the INFO lines are only printed if -v (Verbose) was set"
-
-       #Dialog 'what is the name you want?' 
-       #Log "The answer to the dialog above was: $dialogAnswer"
-
-       #Warn "The next statement will ask for a password will be printed later.  Use a test string"
-       #DialogNoEcho 'enter password (note that it is not echoed here)'
-       #Log "The password was: $dialogAnswer"
-#done
-Info "End of Run"
-
-#=====
-USER="jfcameron"
-PAGE="1"
-PATH_TO_WORKSPACE=~/Workspace
-
-# --------------
-# Implementation
-# --------------
-function clone()
-{
-  pushd $PATH_TO_WORKSPACE > /dev/null
-  echo "\033[1;33mCloning User Repos\033[0m"
-  curl "https://api.github.com/users/$USER/repos?page=$PAGE&per_page=1" |
-    grep -e 'git_url*' |
-    cut -d \" -f 4 |
-    xargs -L1 git clone
-
-  echo "\033[1;33mCloning Starred Repos\033[0m"
-  curl "https://api.github.com/users/$USER/starred?page=$PAGE&per_page=1" |
-    grep -e 'git_url*' |
-    cut -d \" -f 4 |
-    xargs -L1 git clone
-
-  popd > /dev/null
-}
-
-function fetchAndPull()
-{
-  print "asdf"
-
-}
-
-#sync

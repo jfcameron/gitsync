@@ -6,8 +6,6 @@ Synchronize local copies of github account repos and starred repos.
 
 Useful for maintaining a workspace across multiple machines.
 
-Bash script. Requires curl.
-
 ## Usage
 Plug in your workspace path and github account name into the config section. then refer to -h or below:
 

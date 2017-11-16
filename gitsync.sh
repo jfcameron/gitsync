@@ -13,6 +13,8 @@ PATH_TO_WORKSPACE=~/Workspace
 printHelp () {
 sed 's/^# \{0,1\}//' << Help
 #---------------------------------------------------------------------
+# Written by Joseph Cameron
+# Created on 2017-11-15.
 #
 # $progName -- help info 
 #
@@ -33,10 +35,10 @@ sed 's/^# \{0,1\}//' << Help
 #       option: push (args: none) >> git add --all;git commit;git push
 #        all personal repos in workspace.
 #
-# Description:
-#
 # Example Usage:
-#       $shortProgName -X -V
+#       $shortProgName clone --all
+#       $shortProgName pull --personal
+#       $shortProgName push
 #
 #---------------------------------------------------------------------
 Help

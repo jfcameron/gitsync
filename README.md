@@ -1,7 +1,19 @@
-# gitsync
-Synchronize local workspace based on your github account
+# GitSync
+{IMG HERE}
 
--
+## Description
+Synchronize local copies of github account repos and starred repos.
 
-Keep the local copies of your github repos & starred repos up to date. Useful if you do development on many computers.
+Useful for maintaining a workspace across multiple machines.
 
+Bash script. Requires curl.
+
+## Usage
+Plug in your workspace path and github account name into the config section. then refer to -h or below:
+
+- there are three commands: clone, pull, push
+- clone and pull have three arguments: --all/-a, --starred/-s, --personal/-p
+
+- gitsync clone --all OR -a : makes local copies of all your accont repos and starred repos
+- gitsync pull --personal: performs git fetch --all;git pull in all personal repos in your workspace
+- git push performs git add --all;git commit;git push for all personal repos in your workspace

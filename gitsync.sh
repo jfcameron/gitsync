@@ -17,11 +17,21 @@ sed 's/^# \{0,1\}//' << Help
 # $progName -- help info 
 #
 # Summary:
+# Synchronize local copies of github account repos and starred repos.
+# Useful for maintaining a workspace across multiple machines.
 #
 # $shortProgName: [ -X -V -h ] otherParams
-#       option: -X >> turn on shell debugging (set -v) 
-#       option: -V >> verbose, turns on INFO messages
+#       option: -X >> turn on shell debugging (set -v) UNIMPLEMENTED
+#       option: -V >> verbose, turns on INFO messages UNIMPLEMENTED
 #       option: -h >> print this help page
+#       option: clone (args: -a/--all, -p/--personal, -s/--starred)
+#        >> clone all (personal/starred/all) repos on your github
+#         account using curl/github api.
+#       option: pull (args: -a/--all, -p/--personal, -s/--starred)
+#        >> git fetch --all;git pull on all (personal/starred/all) repos 
+#         in workspace
+#       option: push (args: none) >> git add --all;git commit;git push
+#        all personal repos in workspace.
 #
 # Description:
 #
@@ -39,13 +49,6 @@ Log()   { echo -e "$shortProgName:" "$@"; }
 Info()  { if [ x$verbose = xTRUE ]; then echo "$shortProgName: Info:" "$@"; fi; }
 Warn()  { echo -e "$shortProgName: \033[1;33mWarning:\033[0m" "$@"; }
 Error() { echo -e "$shortProgName: \033[1;31mError:\033[0m"   "$@" >/dev/stderr; exit 1; }
-
-#---------------------------------------------------------------------
-# Misc utility functions
-#---------------------------------------------------------------------
-tolower( ) {
-       echo $* | tr '[:upper:]' '[:lower:]'
-}
 
 # ---------------------------------------------------------------------
 # Implementation
@@ -207,13 +210,3 @@ while true; do
   esac
   shift
 done
-
-#--------------
-# The following is just some code to illustrate use of the Info / Confirm / etc
-# functions
-#--------------
-if [ x$table = 'xTRUE' ]; then 
-       Info "Table is true" 
-else
-       Info "Table is false"
-fi

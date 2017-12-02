@@ -1,5 +1,5 @@
 # GitSync
-![alt tag](http://jfcameron.github.io/Github/GitSync/Screenshot.png =250x)
+<img src="http://jfcameron.github.io/Github/GitSync/Screenshot.png" width="200">
 
 ## Description
 Synchronize local copies of github account repos and starred repos.

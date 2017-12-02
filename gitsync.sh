@@ -183,34 +183,38 @@ shortProgName=`echo $progName|sed 's/^.*\///'`
 verbose=''
 initialArgs="$@"
 
-while true; do 
-  case $1 in
-    clone | pull)
-      command=$1 
-      shift
-      case $1 in
-        -a | --all | -s | --starred | -p | --personal) $command $1;;
-        *) if [ "${1}" != '' ]; then 
-          Error "$1 unrecognized argument of $command" 
-        else 
-          Error "$command requires an argument" 
-        fi
+if [ $# == 0 ]; then
+  Error "requires arguments. Use -h to display help message."
+else
+  while true; do 
+    case $1 in
+      clone | pull)
+        command=$1 
+        shift
+        case $1 in
+          -a | --all | -s | --starred | -p | --personal) $command $1;;
+          *) if [ "${1}" != '' ]; then 
+            Error "$1 unrecognized argument of $command" 
+          else 
+            Error "$command requires an argument" 
+          fi
+        ;;
+        esac
       ;;
-      esac
-    ;;
 
-    push)
-      push
-    ;;
+      push)
+        push
+      ;;
 
-    -h | --help) printHelp;;
+      -h | --help) printHelp;;
 
-    *) 
-      if [ "${1}" != '' ]; then
-        Error "unrecognized option: '$1' Use '-h' for help"
-      fi
-      break
-    ;;
-  esac
-  shift
-done
+      *) 
+        if [ "${1}" != '' ]; then
+          Error "unrecognized option: '$1' Use '-h' for help"
+        fi
+        break
+      ;;
+    esac
+    shift
+  done
+fi

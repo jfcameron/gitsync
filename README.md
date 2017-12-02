@@ -1,5 +1,5 @@
 # GitSync
-<img src="http://jfcameron.github.io/Github/GitSync/Screenshot.png" width="200">
+<img src="http://jfcameron.github.io/Github/GitSync/Screenshot.png" width="100%">
 
 ## Description
 Synchronize local copies of github account repos and starred repos.

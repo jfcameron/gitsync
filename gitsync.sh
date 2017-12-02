@@ -52,6 +52,7 @@ Log()   { echo -e "$shortProgName:" "$@"; }
 Info()  { if [ x$verbose = xTRUE ]; then echo "$shortProgName: Info:" "$@"; fi; }
 Warn()  { echo -e "$shortProgName: \033[1;33mWarning:\033[0m" "$@"; }
 Error() { echo -e "$shortProgName: \033[1;31mError:\033[0m"   "$@" >/dev/stderr; exit 1; }
+Print() { echo -e "$@";}
 
 # ---------------------------------------------------------------------
 # Implementation
@@ -60,8 +61,6 @@ NO_STYLE='\033[0m'
 REPO_STYLE='\033[38;5;3m'
 UPTODATE_STYLE='\033[0;32m'
 NEEDUPDATE_STYLE='\033[0;31m'
-NL='
-'
 
 function clone()
 {
@@ -69,7 +68,7 @@ function clone()
   pushd $PATH_TO_WORKSPACE > /dev/null
 
   if [ $1 == --personal ] || [ $1 == -p ] || [ $1 == -a ] || [ $1 == --all ]; then
-    echo -e "\033[1;33mCloning User Repos\033[0m"
+    Print "\033[1;33mCloning User Repos\033[0m"
     curl -u $USER "https://api.github.com/users/$USER/repos?page=1&per_page=$MAX_REPOS" |
       grep -e 'git_url*' |
       cut -d \" -f 4 |
@@ -77,7 +76,7 @@ function clone()
   fi
 
   if [ $1 == --starred ] || [ $1 == -s ] || [ $1 == -a ] || [ $1 == --all ]; then
-  echo -e "\033[1;33mCloning Starred Repos\033[0m"
+  Print "\033[1;33mCloning Starred Repos\033[0m"
   curl -u $USER "https://api.github.com/users/$USER/starred?page=1&per_page=$MAX_REPOS" |
     grep -e 'git_url*' |
     cut -d \" -f 4 |
@@ -105,47 +104,47 @@ function pull()
 
     if [ $1 == -p ] || [ $1 == --personal ]; then
       if [ x$isPersonalRepo == 'xTRUE' ]; then
-        printf "Repo: ${REPO_STYLE}${repo}${NO_STYLE}\n";
+        Print "Repo: ${REPO_STYLE}${repo}${NO_STYLE}";
         git fetch --all
         git submodule update --init --recursive
         git status
         if [[ $( git status ) != *"Your branch is up-to-date"* ]]; then
-          printf "${NEEDUPDATE_STYLE}Updating...${NO_STYLE}\n"
+          Print "${NEEDUPDATE_STYLE}Updating...${NO_STYLE}"
           git pull
         else
-          printf "${UPTODATE_STYLE}Already up-to-date.${NO_STYLE}\n"
+          Print "${UPTODATE_STYLE}Already up-to-date.${NO_STYLE}"
         fi
         cd ..
-        echo
+        Print
       fi
     elif [ $1 == -s ] || [ $1 == --starred ]; then
       if [ x$isPersonalRepo == 'xFALSE' ]; then
-        printf "Repo: ${REPO_STYLE}${repo}${NO_STYLE}\n";
+        Print "Repo: ${REPO_STYLE}${repo}${NO_STYLE}";
         git fetch --all
         git submodule update --init --recursive
         git status
         if [[ $( git status ) != *"Your branch is up-to-date"* ]]; then
-          printf "${NEEDUPDATE_STYLE}Updating...${NO_STYLE}\n"
+          Print "${NEEDUPDATE_STYLE}Updating...${NO_STYLE}"
           git pull
         else
-          printf "${UPTODATE_STYLE}Already up-to-date.${NO_STYLE}\n"
+          Print "${UPTODATE_STYLE}Already up-to-date.${NO_STYLE}"
         fi
         cd ..
-        echo
+        Print
       fi
     else
-      printf "Repo: ${REPO_STYLE}${repo}${NO_STYLE}\n";
+      Print "Repo: ${REPO_STYLE}${repo}${NO_STYLE}";
       git fetch --all
       git submodule update --init --recursive
       git status
       if [[ $( git status ) != *"Your branch is up-to-date"* ]]; then
-        printf "${NEEDUPDATE_STYLE}Updating...${NO_STYLE}\n"
+        Print "${NEEDUPDATE_STYLE}Updating...${NO_STYLE}"
         git pull
       else
-        printf "${UPTODATE_STYLE}Already up-to-date.${NO_STYLE}\n"
+        Print "${UPTODATE_STYLE}Already up-to-date.${NO_STYLE}"
       fi
       cd ..
-      echo
+      Print
     fi
 
   ); done
@@ -164,7 +163,7 @@ function push()
     cd $repo
 
     if [[ $(git remote get-url origin) == *"${USER}"* ]]; then
-      printf "Repo: ${REPO_STYLE}${repo}${NO_STYLE}\n";
+      Print "Repo: ${REPO_STYLE}${repo}${NO_STYLE}";
       git add --all
       git commit
       git push

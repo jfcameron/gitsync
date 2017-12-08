@@ -13,6 +13,8 @@ Enter your workspace path and github account name into the config section:
     PATH_TO_WORKSPACE=~/Workspace
     MAX_REPOS=100
 
+consider adding gitsync to your path.
+
 then refer to gitsync.sh -h:
 
     #---------------------------------------------------------------------

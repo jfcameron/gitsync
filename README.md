@@ -7,7 +7,13 @@ Synchronize local copies of github account repos and starred repos.
 Useful for maintaining a workspace across multiple machines.
 
 ## Usage
-Enter your workspace path and github account name into the config section. then refer to gitsync.sh -h:
+Enter your workspace path and github account name into the config section:
+
+    USER="jfcameron"
+    PATH_TO_WORKSPACE=~/Workspace
+    MAX_REPOS=100
+
+then refer to gitsync.sh -h:
 
     #---------------------------------------------------------------------
     #

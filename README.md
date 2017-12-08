@@ -13,5 +13,5 @@ Plug in your workspace path and github account name into the config section. the
 - clone and pull have three arguments: --all/-a, --starred/-s, --personal/-p
 
 - gitsync clone --all : makes local copies of all your account repos and starred repos
-- gitsync pull --personal: performs git fetch --all;git pull in all personal repos in your workspace
+- gitsync pull --personal: performs git fetch --all;submodule update --init --recursive;git pull in all personal repos in your workspace
 - git push performs git add --all;git commit;git push for all personal repos in your workspace

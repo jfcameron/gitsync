@@ -8,6 +8,7 @@ Useful for maintaining a workspace across multiple machines.
 
 ## Usage
 Enter your workspace path and github account name into the config section. then refer to gitsync.sh -h:
+
     #---------------------------------------------------------------------
     #
     # $progName -- help info 

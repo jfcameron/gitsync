@@ -1,13 +1,6 @@
 #!/usr/bin/env bash 
 
 #---------------------------------------------------------------------
-# Configuration
-#---------------------------------------------------------------------
-USER="jfcameron"
-PATH_TO_WORKSPACE=~/Workspace
-MAX_REPOS=100
-
-#---------------------------------------------------------------------
 # Help & About
 #---------------------------------------------------------------------
 printHelp () {
@@ -52,11 +45,26 @@ Help
 #---------------------------------------------------------------------
 # Print info, warning, or error and eit
 #---------------------------------------------------------------------
-Log()   { echo -e "$shortProgName:" "$@"; }
-Info()  { if [ x$verbose = xTRUE ]; then echo "$shortProgName: Info:" "$@"; fi; }
-Warn()  { echo -e "$shortProgName: \033[1;33mWarning:\033[0m" "$@"; }
-Error() { echo -e "$shortProgName: \033[1;31mError:\033[0m"   "$@" >/dev/stderr; exit 1; }
-Print() { echo -e "$@";}
+progName=$0
+shortProgName=`echo $progName|sed 's/^.*\///'`
+
+Log()         { echo -e "$shortProgName:" "$@"; }
+Info()        { if [ x$verbose = xTRUE ]; then echo "$shortProgName: Info:" "$@"; fi; }
+Warn()        { echo -e "$shortProgName: \033[1;33mWarning:\033[0m" "$@"; }
+Error()       { echo -e "$shortProgName: \033[1;31mError:\033[0m"   "$@" >/dev/stderr; exit 1; }
+Print()       { echo -e "$@"; }
+RequiredVar() { if [ -z ${!1+x} ]; then printHelp; Error "Required variable \"${1}\" is unset. Hint: ${2}"; fi; }
+
+#---------------------------------------------------------------------
+# Configuration
+#---------------------------------------------------------------------
+RequiredVar "JFCAMERON_GITSYNC_USER"              "name of your github account"
+RequiredVar "JFCAMERON_GITSYNC_PATH_TO_WORKSPACE" "path to the directory which will hold all your local copies"
+
+USER=$JFCAMERON_GITSYNC_USER
+PATH_TO_WORKSPACE=$JFCAMERON_GITSYNC_PATH_TO_WORKSPACE
+
+MAX_REPOS=1000
 
 # ---------------------------------------------------------------------
 # Implementation
@@ -181,8 +189,6 @@ function push()
 #---------------------------------------------------------------------
 # Mainline begins here
 #---------------------------------------------------------------------
-progName=$0
-shortProgName=`echo $progName|sed 's/^.*\///'`
 verbose=''
 initialArgs="$@"
 

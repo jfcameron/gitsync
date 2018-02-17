@@ -34,6 +34,10 @@ sed 's/^# \{0,1\}//' << Help
 #     git add --all;git commit;git push all personal repos in 
 #     workspace.
 #
+# Config:
+#   JFCAMERON_GITSYNC_USER: name of your github account
+#   JFCAMERON_GITSYNC_PATH_TO_WORKSPACE: path to the directory which will hold all your local copies
+#
 # Author:
 #   Written by Joseph Cameron
 #   Created on 2017-11-15.

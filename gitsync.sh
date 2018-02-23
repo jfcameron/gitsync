@@ -1,4 +1,4 @@
-#!/usr/bin/env bash 
+#!/usr/bin/env bash
 
 #---------------------------------------------------------------------
 # Help & About
@@ -11,32 +11,34 @@ sed 's/^# \{0,1\}//' << Help
 #
 # Summary:
 #   Synchronize local copies of github account repos and starred repos.
-#   Useful for maintaining a workspace across multiple machines.
+#   Useful for maintaining a github workspace across multiple machines.
 #
 # Example Usage:
-#   $shortProgName clone --all
 #   $shortProgName pull --personal
 #   $shortProgName push
 #
-# $shortProgName: [ -h clone pull push ]
+# $shortProgName: [ -h clone pull push status ]
 #   option: -h
 #     print this help page
 #
 #   option: clone [ -a/--all, -p/--personal, -s/--starred ]
-#     clone all (personal/starred/all) repos on your github
-#     account using curl/github api.
+#     clone [...] repos on your github account using curl/github api.
 #
 #   option: pull [ -a/--all, -p/--personal, -s/--starred ]
-#     git fetch --all;submodule update --init --recursive;git pull
-#     on all (personal/starred/all) repos in workspace
+#     fetch --all;submodule update --init --recursive; pull [...]
+#     repos in workspace.
 #
 #   option: push []
-#     git add --all;git commit;git push all personal repos in 
-#     workspace.
+#     add --all; commit; push [personal] repos in workspace.
+#
+#   option: status []
+#      status [personal] repos in workspace.
 #
 # Config:
-#   JFCAMERON_GITSYNC_USER: name of your github account
-#   JFCAMERON_GITSYNC_PATH_TO_WORKSPACE: path to the directory which will hold all your local copies
+#   JFCAMERON_GITSYNC_USER: name of your github account.
+#
+#   JFCAMERON_GITSYNC_PATH_TO_WORKSPACE: 
+#     path to the directory which will hold all your local copies.
 #
 # Author:
 #   Written by Joseph Cameron
@@ -190,6 +192,26 @@ function push()
   popd > /dev/null
 }
 
+function status()
+{
+  Log "status"
+  pushd $PATH_TO_WORKSPACE > /dev/null
+
+  for repo in ./*/.git; do 
+  (
+    repo=${repo%.*}
+    cd $repo
+
+    if [[ $(git remote get-url origin) == *"${USER}"* ]]; then
+      Print "Repo: ${REPO_STYLE}${repo}${NO_STYLE}";
+      git status
+    fi
+
+  ); done
+
+  popd > /dev/null
+}
+
 #---------------------------------------------------------------------
 # Mainline begins here
 #---------------------------------------------------------------------
@@ -217,6 +239,10 @@ else
 
       push)
         push
+      ;;
+
+      status)
+        status
       ;;
 
       -h | --help) printHelp;;

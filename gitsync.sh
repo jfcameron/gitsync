@@ -22,7 +22,7 @@ sed 's/^# \{0,1\}//' << Help
 #     print this help page
 #
 #   option: clone [ -a/--all, -p/--personal, -s/--starred ]
-#     clone [...] repos on your github account using curl/github api.
+#     clone [...] repos on your github account.
 #
 #   option: pull [ -a/--all, -p/--personal, -s/--starred ]
 #     fetch --all;submodule update --init --recursive; pull [...]
@@ -31,8 +31,8 @@ sed 's/^# \{0,1\}//' << Help
 #   option: push []
 #     add --all; commit; push [personal] repos in workspace.
 #
-#   option: status []
-#      status [personal] repos in workspace.
+#   option: status [ -a/--all, -p/--personal, -s/--starred ]
+#      status [...] repos in workspace.
 #
 # Config:
 #   JFCAMERON_GITSYNC_USER: name of your github account.
@@ -51,9 +51,6 @@ Help
 #---------------------------------------------------------------------
 # Print info, warning, or error and eit
 #---------------------------------------------------------------------
-progName=$0
-shortProgName=`echo $progName|sed 's/^.*\///'`
-
 Log()         { echo -e "$shortProgName:" "$@"; }
 Info()        { if [ x$verbose = xTRUE ]; then echo "$shortProgName: Info:" "$@"; fi; }
 Warn()        { echo -e "$shortProgName: \033[1;33mWarning:\033[0m" "$@"; }
@@ -201,10 +198,19 @@ function status()
   (
     repo=${repo%.*}
     cd $repo
+    
+    if [ $1 == --personal ] || [ $1 == -p ] || [ $1 == -a ] || [ $1 == --all ]; then
+      if [[ $(git remote get-url origin) == *"${USER}"* ]]; then
+        Print "Repo: ${REPO_STYLE}${repo}${NO_STYLE}";
+        git status
+      fi
+    fi
 
-    if [[ $(git remote get-url origin) == *"${USER}"* ]]; then
-      Print "Repo: ${REPO_STYLE}${repo}${NO_STYLE}";
-      git status
+    if [ $1 == --starred ] || [ $1 == -s ] || [ $1 == -a ] || [ $1 == --all ]; then
+      if [[ ! $(git remote get-url origin) == *"${USER}"* ]]; then
+        Print "Repo: ${REPO_STYLE}${repo}${NO_STYLE}";
+        git status
+      fi
     fi
 
   ); done
@@ -215,6 +221,9 @@ function status()
 #---------------------------------------------------------------------
 # Mainline begins here
 #---------------------------------------------------------------------
+progName=$0
+shortProgName=`echo $progName|sed 's/^.*\///'`
+noAffixProgName=`echo $shortProgName|sed 's/\.[^.]*$//'`
 verbose=''
 initialArgs="$@"
 
@@ -223,7 +232,7 @@ if [ $# == 0 ]; then
 else
   while true; do 
     case $1 in
-      clone | pull)
+      clone | pull | status)
         command=$1 
         shift
         case $1 in
@@ -239,10 +248,6 @@ else
 
       push)
         push
-      ;;
-
-      status)
-        status
       ;;
 
       -h | --help) printHelp;;

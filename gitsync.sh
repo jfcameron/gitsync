@@ -58,6 +58,19 @@ Error()       { echo -e "$shortProgName: \033[1;31mError:\033[0m"   "$@" >/dev/s
 Print()       { echo -e "$@"; }
 RequiredVar() { if [ -z ${!1+x} ]; then printHelp; Error "Required variable \"${1}\" is unset. Hint: ${2}"; fi; }
 
+PromptForPassword() 
+{
+    PromptForPassword_Output=""
+
+    trap 'stty echo; exit'  1 2 3 15
+    stty -echo
+    read -p "$shortProgName: " PromptForPassword_Output 
+    #echo '...'
+    stty echo
+    trap -  1 2 3 15
+    Info "DialogNoAnswer: $*: $PromptForPassword_Output"
+}
+
 #---------------------------------------------------------------------
 # Configuration
 #---------------------------------------------------------------------
@@ -79,12 +92,13 @@ NEEDUPDATE_STYLE='\033[0;31m'
 
 function clone()
 {
-  Log clone $1
+  if [ -z ${PromptForPassword_Output+x} ]; then PromptForPassword; fi
+
   pushd $PATH_TO_WORKSPACE > /dev/null
 
   if [ $1 == --personal ] || [ $1 == -p ] || [ $1 == -a ] || [ $1 == --all ]; then
     Print "\033[1;33mCloning User Repos\033[0m"
-    curl -u $USER "https://api.github.com/users/$USER/repos?page=1&per_page=$MAX_REPOS" |
+    curl -u $USER:$PromptForPassword_Output "https://api.github.com/users/$USER/repos?page=1&per_page=$MAX_REPOS" |
       grep -e 'git_url*' |
       cut -d \" -f 4 |
       xargs -L1 git clone
@@ -92,7 +106,7 @@ function clone()
 
   if [ $1 == --starred ] || [ $1 == -s ] || [ $1 == -a ] || [ $1 == --all ]; then
   Print "\033[1;33mCloning Starred Repos\033[0m"
-  curl -u $USER "https://api.github.com/users/$USER/starred?page=1&per_page=$MAX_REPOS" |
+  curl -u $USER:$PromptForPassword_Output "https://api.github.com/users/$USER/starred?page=1&per_page=$MAX_REPOS" |
     grep -e 'git_url*' |
     cut -d \" -f 4 |
     xargs -L1 git clone

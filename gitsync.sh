@@ -41,7 +41,7 @@ sed 's/^# \{0,1\}//' << Help
 #     path to the directory which will hold all your local copies.
 #
 # Author:
-#   Written by Joseph Cameron
+#   Written by Joseph Cameron | jfcameron.github.io
 #   Created on 2017-11-15.
 #
 #---------------------------------------------------------------------

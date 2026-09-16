@@ -35,13 +35,13 @@ sed 's/^# \{0,1\}//' << Help
 #      status [...] repos in workspace.
 #
 # Config:
-#   JFCAMERON_GITSYNC_USER: name of your github account.
+#   JFC_GITSYNC_USER: name of your github account.
 #
-#   JFCAMERON_GITSYNC_PATH_TO_WORKSPACE: 
+#   JFC_GITSYNC_PATH_TO_WORKSPACE: 
 #     path to the directory which will hold all your local copies.
 #
 # Author:
-#   Written by Joseph Cameron | jfcameron.github.io
+#   Written by Joseph Cameron | github.com/jfcameron
 #   Created on 2017-11-15.
 #
 #---------------------------------------------------------------------
@@ -74,11 +74,11 @@ PromptForPassword()
 #---------------------------------------------------------------------
 # Configuration
 #---------------------------------------------------------------------
-RequiredVar "JFCAMERON_GITSYNC_USER"              "name of your github account"
-RequiredVar "JFCAMERON_GITSYNC_PATH_TO_WORKSPACE" "path to the directory which will hold all your local copies"
+RequiredVar "JFC_GITSYNC_USER"              "name of your github account"
+RequiredVar "JFC_GITSYNC_PATH_TO_WORKSPACE" "path to the directory which will hold all your local copies"
 
-USER=$JFCAMERON_GITSYNC_USER
-PATH_TO_WORKSPACE=$JFCAMERON_GITSYNC_PATH_TO_WORKSPACE
+USER=$JFC_GITSYNC_USER
+PATH_TO_WORKSPACE=$JFC_GITSYNC_PATH_TO_WORKSPACE
 
 MAX_REPOS=1000
 

@@ -54,5 +54,3 @@ then refer to gitsync.sh -h:
     #   Created on 2017-11-15.
     # 
     #---------------------------------------------------------------------
-
-consider adding gitsync to your path for the most convenience.

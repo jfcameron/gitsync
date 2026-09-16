@@ -9,8 +9,8 @@ Useful for maintaining a workspace across multiple machines.
 ## Usage
 Set the following variables in your bash profile:
 
-    export JFCAMERON_GITSYNC_USER="jfcameron"
-    export JFCAMERON_GITSYNC_PATH_TO_WORKSPACE="~/Workspace"
+    export JFC_GITSYNC_USER="jfcameron"
+    export JFC_GITSYNC_PATH_TO_WORKSPACE="~/Workspace"
 
 then refer to gitsync.sh -h:
 
@@ -44,9 +44,9 @@ then refer to gitsync.sh -h:
     #      status [...] repos in workspace.
     # 
     # Config:
-    #   JFCAMERON_GITSYNC_USER: name of your github account.
+    #   JFC_GITSYNC_USER: name of your github account.
     # 
-    #   JFCAMERON_GITSYNC_PATH_TO_WORKSPACE: 
+    #   JFC_GITSYNC_PATH_TO_WORKSPACE: 
     #     path to the directory which will hold all your local copies.
     # 
     # Author:
